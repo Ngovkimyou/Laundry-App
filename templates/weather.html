@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="shortcut icon" href="{{ url_for('static',
+    filename='images/duck.gif') }}"">
+  </head>
+  <body
+    style="background-image: url('../static/images/duck_swimming.gif')"
+    class="bg-cover bg-center h-screen font-sans text-gray-800 p-6"
+  >
+    <!-- BACK BUTTON -->
+    <button
+      onclick="history.back()"
+      class="absolute top-4 left-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl"
+    >
+      ← Back
+    </button>
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- LEFT PANEL -->
+      <div
+        class="bg-gray-50 rounded-2xl shadow-lg p-6 h-auto flex flex-col items-center justify-between border-2 border-[#FEBA17]"
+      >
+        <div class="flex h-full items-center justify-between">
+          <div class="flex flex-col items-center justify-center space-x-4">
+            <h1 class="text-4xl font-bold text-blue-500 m-5">
+              {{ data.city }}
+            </h1>
+            {% set cond = data.condition | lower %} {% set emoji_map = {
+            'sunny': '☀️', 'clear': '☀️', 'thunder': '⚡️', 'patchy rain
+            possible': '🌧️', 'light drizzle': '🌧️', 'moderate rain': '🌧️',
+            'torrential rain shower': '🌧️', 'patchy light rain with thunder':
+            '⛈️', 'thunder storm': '⛈️', 'light rain': '🌦️', 'light snow': '🌨️',
+            'heavy snow': '🌨️', 'patchy snow possible': '🌨️', 'ice pellets':
+            '❄️', 'moderate or heavy snow with thunder': '🌨️', 'cloudy': '☁️',
+            'overcast': '☁️', 'partly cloudy':'☁️', 'mist': '🌫️', 'fog': '🌫️',
+            'freezing fog': '🌫️' } %} {% set ns = namespace(weather_emoji='☀️')
+            %} {% for key, emoji in emoji_map.items() %} {% if key in cond %} {%
+            set ns.weather_emoji = emoji %} {% endif %} {% endfor %}
+
+            <div class="text-9xl">{{ ns.weather_emoji }}</div>
+
+            <h2 class="text-4xl font-bold m-5">{{ data.temperature }}°C</h2>
+            <p class="text-sm text-gray-500">{{ data.condition }}</p>
+            <p class="text-gray-500 mb-2">{{ data.current_time }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAUNDRY Suggestion -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Luandry Suggestion -->
+        <div
+          class="bg-gray-50 rounded-2xl shadow-lg p-6 border-2 border-[#FEBA17]"
+        >
+          <h3 class="text-center text-2xl font-semibold m-4">
+            {{data.suggestion}}
+          </h3>
+          {% set recommendation = data.suggestion.strip() %} {% set image_map =
+          { "❌ Not a good day for laundry. Expect precipitation.":
+          "no.gif", "⚠️ It's humid today. Clothes might dry slowly.":
+          "not_sure.gif", "✅ Windy and dry – great for outdoor drying!":
+          "good.gif", "✅ Weather looks fine for laundry.": "good.gif" }
+          %} {% set image_file = image_map.get(recommendation, "good.gif") %}
+
+          <img
+            src="{{ url_for('static', filename='images/' + image_file) }}"
+            alt="Weather Image"
+            class="mx-auto w-100 h-100"
+          />
+        </div>
+
+        <!-- Highlights Section -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Feels Like -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Feels Like</p>
+            <p class="text-2xl font-semibold mt-2">{{ data.feels_like }}°C</p>
+          </div>
+
+          <!-- Wind Speed -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Wind Speed</p>
+            <p class="text-2xl font-semibold mt-2">
+              {{ data.wind_speed }} km/h
+            </p>
+          </div>
+
+          <!-- Sunrise & Sunset -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Sunrise</p>
+            <p class="text-2xl font-semibold mt-1">{{ data.sunrise }}</p>
+            <p class="text-sm text-gray-400">Sunset: {{ data.sunset }}</p>
+          </div>
+
+          <!-- Humidity -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Humidity</p>
+            <p class="text-2xl font-semibold mt-2">{{ data.humidity }}%</p>
+          </div>
+
+          <!-- Pressure -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Pressure</p>
+            <p class="text-2xl font-semibold mt-2">{{ data.pressure }} hPa</p>
+          </div>
+
+          <!-- Condition -->
+          <div
+            class="bg-gray-50 rounded-xl shadow p-4 text-center border-2 border-[#FEBA17]"
+          >
+            <p class="text-sm text-gray-500">Condition</p>
+            <p class="text-xl mt-2 text-green-600">{{ data.condition }}</p>
+          </div>
+        </div>
+        <!-- Link -->
+        <div class="text-right">
+          <form action="{{ url_for('laundry_details', city=data.city) }}">
+            <button
+              type="submit"
+              class="bg-yellow-500 text-white hover:bg-yellow-600 transition text-sm p-5 rounded-lg"
+            >
+              View Laundry Time Details →
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>

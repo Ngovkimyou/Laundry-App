@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Laundry Time Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="shortcut icon" href="{{ url_for('static',
+    filename='images/duck.gif') }}"">
+  </head>
+  <body
+    style="background-image: url('../static/images/duck_swimming.gif')"
+    class="bg-cover bg-center h-screen text-gray-800 font-sans p-6 relative"
+  >
+    <!-- Back Button -->
+    <button
+      onclick="window.history.back()"
+      class="absolute top-4 left-4 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600"
+    >
+      ← Back
+    </button>
+    <!-- Tittle -->
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-5xl font-bold mb-2 text-white">
+        Laundry Time Forecast – {{ city }}
+      </h1>
+
+      <h2 class="text-2xl font-semibold text-white mb-4">
+        🌦️ 24-Hour Forecast Table
+      </h2>
+      
+      <!-- Table -->
+      <div class="overflow-x-auto border-2 border-[#FEBA17]">
+        <table
+          class="w-full table-auto border border-gray-300 bg-white shadow-md"
+        >
+          <thead class="bg-blue-100">
+            <tr>
+              <th class="p-3 border border-gray-300 text-sm font-medium">
+                Time
+              </th>
+              <th class="p-3 border border-gray-300 text-sm font-medium">
+                Precipitation (mm)
+              </th>
+              <th class="p-3 border border-gray-300 text-sm font-medium">
+                Laundry Recommendation
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for time, precip in forecast %}
+            <tr class="hover:bg-gray-50">
+              <td class="p-3 border border-gray-200 text-center">{{ time }}</td>
+              <td class="p-3 border border-gray-200 text-center">
+                {{ precip }}
+              </td>
+              <td class="p-3 border border-gray-200 text-center">
+                {% if precip == 0 %} ✅ Good {% elif precip < 0.5 %} 🤔 Might be
+                okay {% else %} ❌ Not Recommended {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Graph -->
+      <h2 class="text-3xl font-semibold text-white mt-10 mb-4">
+        📊 Precipitation Graph
+      </h2>
+      <div class="bg-white shadow-md p-4 rounded-lg">
+        <canvas
+          id="precipChart"
+          class="w-full h-64 border-2 border-[#FEBA17]"
+        ></canvas>
+      </div>
+    </div>
+    <script>
+      const labels = {{ forecast | map(attribute=0) | list | tojson }};
+      const data = {{ forecast | map(attribute=1) | list | tojson }};
+
+      const ctx = document.getElementById('precipChart').getContext('2d');
+      new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: 'Precipitation (mm)',
+                  data: data,
+                  backgroundColor: 'rgba(135, 206, 250, 0.4)',
+                  borderColor: 'rgba(30, 144, 255, 1)',
+                  borderWidth: 2,
+                  tension: 0.4,
+                  fill: true,
+                  pointRadius: 3,
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'mm'
+                      }
+                  },
+                  x: {
+                      title: {
+                          display: true,
+                          text: 'Time (HH:MM)'
+                      }
+                  }
+              }
+          }
+      });
+    </script>
+  </body>
+</html>

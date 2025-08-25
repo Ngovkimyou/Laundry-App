@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Laundry Weather Helper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="{{ url_for('static',
+    filename='images/duck.gif') }}"">
+  </head>
+  <body
+    style="background-image: url('../static/images/duck_swimming.gif')"
+    class="bg-cover bg-center h-screen flex items-center justify-center font-sans"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-4xl text-center border-2 border-[#FEBA17]"
+    >
+      <h1 class="text-5xl font-bold text-gray-800 mb-4">
+        🧺 Boak Kouk Chlart Vey
+      </h1>
+      <p class="text-gray-500 mb-6 text-xl">
+        Enter your city to check if it's a good time to do laundry!
+      </p>
+
+      <form method="POST" class="space-y-4">
+        <input
+          type="text"
+          name="city"
+          placeholder="e.g., Phnom Penh"
+          required
+          class="w-full text-2xl p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        />
+        <button
+          type="submit"
+          class="w-auto bg-yellow-500 text-white text-xl p-5 rounded-lg hover:bg-yellow-600 transition"
+        >
+          ☁️ Check Laundry Weather
+        </button>
+      </form>
+      <img
+        src="{{ url_for('static', filename='images/duck.gif') }}"
+        alt="Weather Image"
+        class="mx-auto w-80 h-80"
+      />
+
+      {% if error %}
+      <p class="text-red-500 text-sm mt-4">{{ error }}</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
